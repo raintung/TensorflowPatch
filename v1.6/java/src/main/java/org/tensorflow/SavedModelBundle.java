@@ -38,7 +38,31 @@ public class SavedModelBundle implements AutoCloseable {
   public static SavedModelBundle load(String exportDir, String... tags) {
     return load(exportDir, tags, null);
   }
-
+   
+    /**
+   * Load a saved model from an export directory. The model that is being loaded should be created
+   * using the <a href="https://www.tensorflow.org/api_docs/python/tf/saved_model">Saved Model
+   * API</a>.
+   *
+   * @param exportDir the directory path containing a saved model.
+   * @param tags the tags identifying the specific metagraphdef to load.
+   * @return a bundle containing the graph and associated session.
+   */
+  public static SavedModelBundle load(String exportDir, String... tags, byte[] runOptions) {
+    return load(exportDir, tags, runOptions);
+  }
+      /**
+   * Load a saved model from an export directory. The model that is being loaded should be created
+   * using the <a href="https://www.tensorflow.org/api_docs/python/tf/saved_model">Saved Model
+   * API</a>.
+   *
+   * @param exportDir the directory path containing a saved model.
+   * @param tags the tags identifying the specific metagraphdef to load.
+   * @return a bundle containing the graph and associated session.
+   */
+  public static SavedModelBundle load(String exportDir, String... tags, byte[] sessionOptions) {
+    return load(exportDir, tags, runOptions, sessionOptions);
+  }
   /**
    * Returns the serialized <a
    * href="https://www.tensorflow.org/code/tensorflow/core/protobuf/meta_graph.proto">MetaGraphDef
