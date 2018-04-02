@@ -113,15 +113,12 @@ JNIEXPORT jlong JNICALL Java_org_tensorflow_Session_allocate2(
     throwException(env, kNullPointerException, "Graph has been close()d");
     return 0;
   }
-  TF_Graph* graph = reinterpret_cast<TF_Graph*>(graph_handle);
+
   TF_Status* status = TF_NewStatus();
   TF_SessionOptions* opts = TF_NewSessionOptions();
-  const char* ctarget = nullptr;
-  jbyte* cconfig = nullptr;
-  if (target != nullptr) {
-    ctarget = env->GetStringUTFChars(target, nullptr);
-  }
 
+
+  //Check the session options
   TF_Buffer* csession_options = nullptr;
   if (config != nullptr) {
 	  size_t sz = env->GetArrayLength(config);
@@ -130,7 +127,7 @@ JNIEXPORT jlong JNICALL Java_org_tensorflow_Session_allocate2(
 		  //Copy the config to buffer
 		  csession_options =
 		  		           TF_NewBufferFromString(static_cast<void*>(cconfig), sz);
-		  //Release the config to garbage to collect it.
+		  //Release the config let the garbage collect it.
 		  env->ReleaseByteArrayElements(config, cconfig, JNI_ABORT);
 		  TF_SetConfig(opts, csession_options->data,
 				                        csession_options->length, status);
@@ -142,6 +139,14 @@ JNIEXPORT jlong JNICALL Java_org_tensorflow_Session_allocate2(
 		  }
 	  }
   }
+
+  const char* ctarget = nullptr;
+  jbyte* cconfig = nullptr;
+  if (target != nullptr) {
+      ctarget = env->GetStringUTFChars(target, nullptr);
+  }
+
+  TF_Graph* graph = reinterpret_cast<TF_Graph*>(graph_handle);
   TF_Session* session = TF_NewSession(graph, opts, status);
   if (csession_options != nullptr) {
 	  TF_DeleteBuffer(csession_options);
